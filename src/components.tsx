@@ -377,8 +377,15 @@ export function EntryList({ entries }: { entries: Entry[] }) {
 
 export function NoteEditor({ day, note, showHangover }: { day: string; note?: DayNote; showHangover?: boolean }) {
   const { t } = useI18n();
-  const [memo, setMemo] = useState(note?.memo ?? '');
-  useEffect(() => setMemo(note?.memo ?? ''), [day, note?.memo]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const composing = useRef(false);
+
+  // Reset textarea imperatively when day or persisted memo changes.
+  // Uncontrolled textarea avoids iOS Safari IME doubling (controlled value
+  // fights the IME confirmation and inserts the text twice).
+  useEffect(() => {
+    if (textareaRef.current) textareaRef.current.value = note?.memo ?? '';
+  }, [day, note?.memo]);
 
   return (
     <div class="note">
@@ -411,14 +418,20 @@ export function NoteEditor({ day, note, showHangover }: { day: string; note?: Da
         </label>
       )}
       <textarea
+        ref={textareaRef}
         class="memo"
         rows={2}
         placeholder={t('note.memoPh')}
         aria-label={t('note.memo')}
-        value={memo}
+        defaultValue={note?.memo ?? ''}
         maxLength={2000}
+        onCompositionStart={() => { composing.current = true; }}
+        onCompositionEnd={(e) => {
+          composing.current = false;
+          setNote(day, { memo: e.currentTarget.value });
+        }}
         onInput={(e) => {
-          setMemo(e.currentTarget.value);
+          if (composing.current) return;
           setNote(day, { memo: e.currentTarget.value });
         }}
       />
