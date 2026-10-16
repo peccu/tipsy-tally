@@ -380,12 +380,12 @@ export function NoteEditor({ day, note, showHangover }: { day: string; note?: Da
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const composing = useRef(false);
 
-  // Reset textarea imperatively when day or persisted memo changes.
-  // Uncontrolled textarea avoids iOS Safari IME doubling (controlled value
-  // fights the IME confirmation and inserts the text twice).
+  // Reset only when day changes. Do NOT depend on note?.memo — that would
+  // re-run on every keystroke and let Preact overwrite element.value while
+  // iOS Safari's IME is still committing, causing text to double.
   useEffect(() => {
     if (textareaRef.current) textareaRef.current.value = note?.memo ?? '';
-  }, [day, note?.memo]);
+  }, [day]);
 
   return (
     <div class="note">
@@ -423,7 +423,6 @@ export function NoteEditor({ day, note, showHangover }: { day: string; note?: Da
         rows={2}
         placeholder={t('note.memoPh')}
         aria-label={t('note.memo')}
-        defaultValue={note?.memo ?? ''}
         maxLength={2000}
         onCompositionStart={() => { composing.current = true; }}
         onCompositionEnd={(e) => {

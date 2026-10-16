@@ -101,7 +101,9 @@ export function History({ today }: { today: string }) {
                 aria-label={`${d} ${v ? amt(v) : ''}`}
               >
                 <span class="cal-n num">{i + 1}</span>
-                {(note?.mood !== undefined || note?.memo || note?.hangover) && <span class="cal-mark" />}
+                {note?.mood !== undefined
+                  ? <span class="cal-mood"><MoodFace level={note.mood} size={12} /></span>
+                  : (note?.memo || note?.hangover) && <span class="cal-mark" />}
               </button>
             );
           })}
