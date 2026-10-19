@@ -93,6 +93,13 @@ textarea {
   color: inherit;
 }
 
+/* iOS Safari zooms in when font-size < 16px on focus. Override here so
+   component-level rules (e.g. .memo) can only raise, never lower it. */
+input,
+textarea {
+  font-size: 16px;
+}
+
 button {
   cursor: pointer;
   background: none;
@@ -721,7 +728,7 @@ p {
   background: var(--surface);
   resize: vertical;
   min-height: 64px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
 }
 
