@@ -5,7 +5,7 @@ import { dayKeyAt } from './date';
 
 const KEY = 'donndake:v1';
 
-const DEFAULT_SETTINGS: Settings = { lang: 'auto', unit: 'g', dayStartHour: 5, guideline: 20 };
+const DEFAULT_SETTINGS: Settings = { lang: 'auto', unit: 'g', dayStartHour: 5, guideline: 20, weekStart: 0 };
 
 export const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
@@ -81,6 +81,7 @@ export function normalize(raw: any, strict = false): Data {
     unit: s.unit === 'ml' ? 'ml' : 'g',
     dayStartHour: num(s.dayStartHour, 0, 6) ?? DEFAULT_SETTINGS.dayStartHour,
     guideline: num(s.guideline, 1, 500) ?? DEFAULT_SETTINGS.guideline,
+    weekStart: s.weekStart === 1 ? 1 : 0,
   };
   if (strict && !drinks && !entries.length) throw new Error('invalid');
   return { version: 1, drinks: drinks ?? presetDrinks(), entries, notes, settings };

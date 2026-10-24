@@ -56,6 +56,8 @@ export interface Settings {
   dayStartHour: number;
   /** Daily guideline in grams of pure alcohol. */
   guideline: number;
+  /** First day of the calendar week: 0 = Sunday, 1 = Monday. */
+  weekStart: 0 | 1;
 }
 
 export interface Data {

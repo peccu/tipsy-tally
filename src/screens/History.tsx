@@ -37,10 +37,13 @@ export function History({ today }: { today: string }) {
   const total = drank.reduce((a, b) => a + b, 0);
 
   const monthFmt = new Intl.DateTimeFormat(lang, { year: 'numeric', month: 'long' });
-  const firstDow = parseKey(days[0]).getDay();
-  const weekdays = Array.from({ length: 7 }, (_, i) =>
-    new Intl.DateTimeFormat(lang, { weekday: 'narrow' }).format(new Date(2024, 0, 7 + i)),
-  );
+  const weekStart = data.settings.weekStart;
+  const lead = (parseKey(days[0]).getDay() - weekStart + 7) % 7;
+  // 2024-01-07 is a Sunday.
+  const weekdays = Array.from({ length: 7 }, (_, i) => {
+    const dow = (weekStart + i) % 7;
+    return { dow, label: new Intl.DateTimeFormat(lang, { weekday: 'narrow' }).format(new Date(2024, 0, 7 + dow)) };
+  });
 
   return (
     <div class="screen history">
@@ -78,14 +81,14 @@ export function History({ today }: { today: string }) {
 
       <section class="calendar">
         <div class="cal-grid cal-head">
-          {weekdays.map((w, i) => (
-            <span key={i} class={i === 0 ? 'sun' : i === 6 ? 'sat' : ''}>
-              {w}
+          {weekdays.map(({ dow, label }) => (
+            <span key={dow} class={dow === 0 ? 'sun' : dow === 6 ? 'sat' : ''}>
+              {label}
             </span>
           ))}
         </div>
         <div class="cal-grid">
-          {Array.from({ length: firstDow }, (_, i) => (
+          {Array.from({ length: lead }, (_, i) => (
             <span key={`b${i}`} />
           ))}
           {days.map((d, i) => {

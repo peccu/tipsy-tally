@@ -127,6 +127,19 @@ export function Settings() {
           />
           <p class="row-hint">{t('set.dayStartHint')}</p>
         </div>
+
+        <div class="row">
+          <span class="row-label">{t('set.weekStart')}</span>
+          <Segmented
+            label={t('set.weekStart')}
+            value={settings.weekStart}
+            onChange={(weekStart) => setSettings({ weekStart })}
+            options={([0, 1] as const).map((d) => ({
+              value: d,
+              label: new Intl.DateTimeFormat(lang, { weekday: 'short' }).format(new Date(2024, 0, 7 + d)),
+            }))}
+          />
+        </div>
       </section>
 
       <h2 class="group-title">{t('set.data')}</h2>
